@@ -1,24 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { auth } from "./firebase";
+import Login from "./pages/Login";
+import UploadPDF from "./pages/UploadPDF";
+import Chat from "./pages/Chat";
 
 function App() {
+  const [step, setStep] = useState("login");
+
+  auth.onAuthStateChanged((user) => {
+    if (user) setStep("upload");
+    else setStep("login");
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {step === "login" && <Login onLogin={() => setStep("upload")} />}
+      {step === "upload" && <UploadPDF onUploaded={() => setStep("chat")} />}
+      {step === "chat" && <Chat />}
+    </>
   );
 }
 
